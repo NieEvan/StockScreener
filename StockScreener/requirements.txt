@@ -1,0 +1,7 @@
+loguru==0.7.2
+MetaTrader5==5.0.45
+websocket-client==1.6.1
+tqsdk==3.4.10
+psutil==5.9.7
+pywin32==306
+# PyQt5==5.15.7
