@@ -81,6 +81,11 @@ class BaseApp:
 
     def start(self) -> None:
         """开始检测"""
+        self.symbol_time = {}
+        if self.symbols is None:
+            self.all_symbols = [["买入", self.buy_symbols], ["卖出", self.sell_symbols]]
+        else:
+            self.all_symbols = [["买卖", self.symbols]]
         while True:
             init_time = time.time()
             self._process_all_symbols()
@@ -88,7 +93,7 @@ class BaseApp:
 
     def _process_all_symbols(self) -> None:
         """处理所有交易对"""
-        for direction, symbols in all_symbols:
+        for direction, symbols in self.all_symbols:
             for symbol in symbols:
                 self._process_single_symbol(symbol, direction)
 
@@ -97,8 +102,8 @@ class BaseApp:
         data = self.get_mt5_data(symbol)  # 去数据
         
         # 如果是新symbol
-        if symbol not in symbol_time.keys():
-            symbol_time[symbol] = {}
+        if symbol not in self.symbol_time.keys():
+            self.symbol_time[symbol] = {}
         
         self._process_symbol_periods(symbol, direction, data)
 
@@ -112,29 +117,29 @@ class BaseApp:
     def _is_new_period_data(self, symbol: str, period: str, data: dict) -> bool:
         """检查是否有新的周期数据"""
         # 如果symbol_time里还没有某个period的数据（第一次）
-        if not symbol_time[symbol].get(period):
+        if not self.symbol_time[symbol].get(period):
             if data[period] is None:
                 print("no data")
                 return False
-            symbol_time[symbol][period] = data[period][-1][0]
+            self.symbol_time[symbol][period] = data[period][-1][0]
             if self.first_run:
-                symbol_time[symbol][period] = 0
+                self.symbol_time[symbol][period] = 0
             return False
         
         # 有新的数据（不是第一次）
-        return data[period][-1][0] != symbol_time[symbol][period]
+        return data[period][-1][0] != self.symbol_time[symbol][period]
 
     def _handle_period_data(self, symbol: str, period: str, direction: str, data: dict) -> None:
         """处理周期数据并发送信号"""
         for name, cls in self.classes.items():
-            signal_info = self._check_strategy_signal(name, cls, period, direction, data)
+            signal_info = self._check_strategy_signal(symbol, name, cls, period, direction, data)
             if signal_info:
                 self._send_signal_notifications(signal_info)
                 
         # 更新数据
-        symbol_time[symbol][period] = data[period][-1][0]
+        self.symbol_time[symbol][period] = data[period][-1][0]
 
-    def _check_strategy_signal(self, name: str, cls, period: str, direction: str, data: dict) -> dict:
+    def _check_strategy_signal(self, symbol: str, name: str, cls, period: str, direction: str, data: dict) -> dict:
         """检查策略信号"""
         signal_info = {}
         try:
