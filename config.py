@@ -27,3 +27,7 @@ STKConfig = {
     "email_reception": "",
     "extra": {},
 }
+
+MONGOConfig = {
+    "": "",
+}

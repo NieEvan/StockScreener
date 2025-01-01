@@ -4,4 +4,5 @@ websocket-client==1.6.1
 tqsdk==3.4.10
 psutil==5.9.7
 pywin32==306
+pymongo
 # PyQt5==5.15.7

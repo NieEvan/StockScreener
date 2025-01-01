@@ -1,14 +1,11 @@
 from strategies.MyTT.MyTT import *
+from strategies.STRATEGY_BASE import SG_BASE
 
 
-class B15:
-    # 策略名称
+# 策略名称
+class B15(SG_BASE):
     def __init__(self):
-        # 策略周期
-        self.period = "15M"
-        # 策略方向
-        self.direction = "买入"
-        self.conditions = f"{self.__class__.__name__}_{self.period}"
+        super().__init__("15M", "买入")
 
     def on_signal(self, data):
         # K线

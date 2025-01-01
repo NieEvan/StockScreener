@@ -9,6 +9,8 @@ from email.header import Header
 import sqlite3
 
 from websocket import WebSocketApp, WebSocket
+from database.mongo_client import connect_to_mongodb
+from database.models import SignalModel
 
 
 def execute_sql(db_path: str, sql: str, params: tuple = ()) -> list:
@@ -55,6 +57,10 @@ class FdtWarningApp:
         self.messages = []
         self.app: Optional[WebSocketApp] = None
         self.real = real
+        # Initialize MongoDB connection
+        self.db, error = connect_to_mongodb()
+        if error:
+            print(f"MongoDB connection failed: {error}")
         if self.real:
             self.thread_start()
 
@@ -88,13 +94,12 @@ class FdtWarningApp:
             except Exception as e:
                 print(f"error: {e}")
 
-    @staticmethod
-    def insert_db(args: tuple) -> None:
-        execute_sql(
-            r"resource\data.db",
-            "insert into signalPool (symbol, market, time, direction, conditions, warn_id) values (?,?,?,?,?,?)",
-            args
-        )
+    def insert_db(self, args: tuple) -> None:
+        try:
+            document = SignalModel.create_document(*args)
+            self.db["Signals"].insert_one(document)
+        except Exception as e:
+            print(f"MongoDB insertion error: {e}")
 
     def send_warning(self, symbol: str, direction: str, conditions: str, market: str,
                      warn_id: int = None, user: str = "", event: str = "early_warning") -> None:
