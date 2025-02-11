@@ -1,8 +1,8 @@
-from base import Base
-from config import FXConfig
+from modules.base import BaseApp
+from config.settings import FXConfig
 
 
-class StrategyManage(Base):
+class StrategyManage(BaseApp):
     def __init__(self) -> None:
         fx_config = FXConfig.copy()
         fx_config.pop("extra")
@@ -30,5 +30,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    print("hello")
     main()

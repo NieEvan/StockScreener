@@ -5,8 +5,7 @@ from datetime import datetime, time as dtime
 from loguru import logger
 from tqsdk import TqApi, TqAuth
 
-from connect import to_email
-from base import Base
+from modules.base import Base
 from config import FUTConfig
 
 
@@ -76,14 +75,6 @@ class StrategyManage(Base):
 
                                 if signal_info:
                                     self.ws.send_warning(**signal_info)
-                                    email_txt = [
-                                        datetime.now().strftime('%m-%d %H:%M'),
-                                        signal_info['symbol'],
-                                        signal_info['direction'][0],
-                                        signal_info['conditions'],
-                                    ]
-                                    email_txt = " ".join(email_txt)
-                                    to_email(self.email_reception, email_txt, self.email_pwd, self.email_user)
                                     logger.info(signal_info)
 
                 except Exception as error:

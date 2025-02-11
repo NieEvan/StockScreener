@@ -4,7 +4,7 @@ import pandas as pd
 from loguru import logger
 import MetaTrader5
 
-from base import Base
+from modules.base import Base
 from config import STKConfig
 
 

@@ -5,6 +5,7 @@ MONGO_DATABASE = "stockscreener"
 MONGO_HOST = "ssdb.sblzd.cn"
 MONGO_PORT = "65278"
 
+# For backward compatibility (can be removed later)
 FUTConfig = {
     "mt5_path": "",
     "warn_user": "",

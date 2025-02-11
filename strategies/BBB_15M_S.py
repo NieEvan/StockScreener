@@ -1,11 +1,14 @@
 from strategies.MyTT.MyTT import *
-from strategies.STRATEGY_BASE import SG_BASE
 
 
 # 策略名称
-class BBB15(SG_BASE):
+class BBB15:
     def __init__(self):
-        super().__init__("15M", "卖出")
+        # 策略周期
+        self.period = "15M"
+        # 策略方向
+        self.direction = "卖出"
+        self.conditions = f"{self.__class__.__name__}_{self.period}"
 
     def on_signal(self, data):
         # K线
@@ -24,5 +27,6 @@ class BBB15(SG_BASE):
         
         Sg=(LOW<XZ ) & ( HIGH>=DZ ) & ( CLOSE>OPEN) & ( 均线角度20>0.5) & CROSS(CLOSE,REF(HIGH,1)) & ( MA20>MA60)
         RETURN=Sg
+        print("RETURN", RETURN)
         
         return RETURN[-1]
